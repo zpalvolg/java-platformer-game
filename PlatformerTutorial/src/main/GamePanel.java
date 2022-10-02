@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -16,18 +17,30 @@ public class GamePanel extends JPanel{
 	private MouseInputs mouseInputs;
 	private int xDelta = 100;
 	private int yDelta = 100;
-	private BufferedImage img,subImg;
+	private BufferedImage img;
+	private BufferedImage[] idleAnimation;
+	private int animationTicker = 0,animationIndex = 0,animationSpeed = 15;
 	
 	public GamePanel() {
 		mouseInputs = new MouseInputs(this);
 		setPanelSize();
 		importImage();
+		loadAnimations();
 		
 		addKeyListener(new KeyboardInputs(this));
 		addMouseListener(mouseInputs);
 		addMouseMotionListener(mouseInputs);
 	}
 	
+	private void loadAnimations() {
+		idleAnimation = new BufferedImage[5];
+		
+		for (int i = 0; i < idleAnimation.length; i++) {
+			idleAnimation[i] = img.getSubimage(i*64, 0, 64, 40);
+		}
+		
+	}
+
 	private void importImage() {
 		InputStream inputStream = getClass().getResourceAsStream("/player_sprites.png");
 		try {
@@ -35,6 +48,12 @@ public class GamePanel extends JPanel{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				inputStream.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 		}
 	}
 
@@ -56,11 +75,26 @@ public class GamePanel extends JPanel{
 		this.yDelta = y;
 	}
 	
+	private void updateAnimationTicker() {
+		animationTicker++;
+		
+		if (animationTicker >= animationSpeed) {
+			animationTicker = 0;
+			animationIndex++;
+			
+			if (animationIndex >= idleAnimation.length) {
+				animationIndex=0;
+			}
+		}
+		
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		subImg = img.getSubimage(1*64,8*40,64,40);
-		g.drawImage(subImg, (int)xDelta, (int)yDelta, 128,80, null);
+		updateAnimationTicker();
+		
+		g.drawImage(idleAnimation[animationIndex], (int)xDelta, (int)yDelta, 128,80, null);
 	}
 
 }
