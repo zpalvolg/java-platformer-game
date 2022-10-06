@@ -12,14 +12,18 @@ import javax.swing.JPanel;
 import inputs.KeyboardInputs;
 import inputs.MouseInputs;
 
+import static utils.Constants.PlayerConstants.*;
+
 public class GamePanel extends JPanel{
 	
 	private MouseInputs mouseInputs;
 	private int xDelta = 100;
 	private int yDelta = 100;
 	private BufferedImage img;
-	private BufferedImage[] idleAnimation;
+	private BufferedImage[][] animations;
 	private int animationTicker = 0,animationIndex = 0,animationSpeed = 15;
+	private int playerAction = IDLE;
+	
 	
 	public GamePanel() {
 		mouseInputs = new MouseInputs(this);
@@ -33,11 +37,15 @@ public class GamePanel extends JPanel{
 	}
 	
 	private void loadAnimations() {
-		idleAnimation = new BufferedImage[5];
+		animations = new BufferedImage[9][6];
 		
-		for (int i = 0; i < idleAnimation.length; i++) {
-			idleAnimation[i] = img.getSubimage(i*64, 0, 64, 40);
+		for (int j = 0; j < animations.length; j++) {
+	
+			for (int i = 0; i < animations[j].length; i++) {
+				animations[j][i] = img.getSubimage(i*64, j*40, 64, 40);
+			}
 		}
+	
 		
 	}
 
@@ -76,17 +84,17 @@ public class GamePanel extends JPanel{
 	}
 	
 	private void updateAnimationTicker() {
+		
 		animationTicker++;
 		
 		if (animationTicker >= animationSpeed) {
 			animationTicker = 0;
 			animationIndex++;
 			
-			if (animationIndex >= idleAnimation.length) {
+			if (animationIndex >= getSpriteAmount(playerAction)) {
 				animationIndex=0;
 			}
 		}
-		
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -94,7 +102,7 @@ public class GamePanel extends JPanel{
 		
 		updateAnimationTicker();
 		
-		g.drawImage(idleAnimation[animationIndex], (int)xDelta, (int)yDelta, 128,80, null);
+		g.drawImage(animations[playerAction][animationIndex], (int)xDelta, (int)yDelta, 256,160, null);
 	}
 
 }
