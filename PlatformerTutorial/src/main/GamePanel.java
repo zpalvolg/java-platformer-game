@@ -2,17 +2,17 @@ package main;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import inputs.KeyboardInputs;
 import inputs.MouseInputs;
 
 import static utils.Constants.PlayerConstants.*;
+import static utils.Constants.Directions.*;
 
 public class GamePanel extends JPanel{
 	
@@ -23,6 +23,8 @@ public class GamePanel extends JPanel{
 	private BufferedImage[][] animations;
 	private int animationTicker = 0,animationIndex = 0,animationSpeed = 15;
 	private int playerAction = IDLE;
+	private int playerDirection = -1;
+	private boolean playerMoving = false;
 	
 	
 	public GamePanel() {
@@ -70,17 +72,13 @@ public class GamePanel extends JPanel{
 		setPreferredSize(size);
 	}
 
-	public void changeXDelta(int value) {
-		this.xDelta += value;
+	public void setDirection(int direction) {
+		this.playerDirection = direction;
+		playerMoving = true;
 	}
 	
-	public void changeYDelta(int value) {
-		this.yDelta += value;
-	}
-	
-	public void setRecPos(int x, int y) {
-		this.xDelta = x;
-		this.yDelta = y;
+	public void setPlayerMoving (boolean moving) {
+		this.playerMoving = moving;
 	}
 	
 	private void updateAnimationTicker() {
@@ -97,12 +95,47 @@ public class GamePanel extends JPanel{
 		}
 	}
 	
+	private void setAnimation() {
+		// TODO Auto-generated method stub
+		if (playerMoving)
+			playerAction = RUNNING;
+		else 
+			playerAction = IDLE;
+		
+	}
+	
+	private void updatePosition() {
+		// TODO Auto-generated method stub
+		if(playerMoving) {
+			switch (playerDirection) {
+			case LEFT: 
+				xDelta -= 5;
+				break;
+			case UP: 
+				yDelta -= 5;
+				break;
+			case RIGHT: 
+				xDelta += 5;
+				break;
+			case DOWN: 
+				yDelta += 5;
+				break;	
+			}
+		}
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
 		updateAnimationTicker();
 		
+		setAnimation();
+		
+		updatePosition();
+		
 		g.drawImage(animations[playerAction][animationIndex], (int)xDelta, (int)yDelta, 256,160, null);
+		
+		Toolkit.getDefaultToolkit().sync();
 	}
 
 }

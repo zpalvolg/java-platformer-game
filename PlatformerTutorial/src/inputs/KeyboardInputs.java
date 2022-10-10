@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import main.GamePanel;
+import static utils.Constants.Directions.*;
 
 public class KeyboardInputs implements KeyListener{
 
@@ -22,6 +23,24 @@ public class KeyboardInputs implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
+		switch(e.getKeyCode()) {
+		case KeyEvent.VK_W:
+			gamePanel.setDirection(UP);
+			//System.out.println("W");
+			break;
+		case KeyEvent.VK_A:
+			gamePanel.setDirection(LEFT);
+			//System.out.println("A");
+			break;
+		case KeyEvent.VK_S:
+			gamePanel.setDirection(DOWN);
+			//System.out.println("S");
+			break;
+		case KeyEvent.VK_D:
+			gamePanel.setDirection(RIGHT);
+			//System.out.println("D");
+			break;
+		}
 		
 	}
 
@@ -31,20 +50,10 @@ public class KeyboardInputs implements KeyListener{
 		
 		switch(e.getKeyCode()) {
 			case KeyEvent.VK_W:
-				gamePanel.changeYDelta(-5);
-				//System.out.println("W");
-				break;
 			case KeyEvent.VK_A:
-				gamePanel.changeXDelta(-5);
-				//System.out.println("A");
-				break;
 			case KeyEvent.VK_S:
-				gamePanel.changeYDelta(5);
-				//System.out.println("S");
-				break;
 			case KeyEvent.VK_D:
-				gamePanel.changeXDelta(5);
-				//System.out.println("D");
+				gamePanel.setPlayerMoving(false);
 				break;
 		}
 		
